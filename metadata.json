@@ -1,0 +1,6 @@
+{
+  "name": "Beauty Lounge",
+  "description": "Luxury Bangladeshi cosmetics, authentic dermatological formulations, and curated beauty rituals tailored for the tropical climate.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

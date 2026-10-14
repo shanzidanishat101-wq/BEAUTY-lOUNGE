@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@theme {
+  --font-headline: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Richer, deeper luxury pink / velvet rose palette */
+  --color-primary: #9e3544;
+  --color-primary-container: #cf5867;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #470e17;
+  --color-primary-fixed: #ffd8dc;
+  --color-primary-fixed-dim: #fca8b4;
+  --color-on-primary-fixed: #3d000c;
+  --color-on-primary-fixed-variant: #7d202d;
+
+  --color-secondary: #8c5324;
+  --color-secondary-container: #fbc698;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #703c14;
+  --color-secondary-fixed: #ffdcbe;
+  --color-secondary-fixed-dim: #f3be8c;
+  --color-on-secondary-fixed: #2e1500;
+  --color-on-secondary-fixed-variant: #693b13;
+
+  --color-tertiary: #4d644d;
+  --color-tertiary-container: #83a083;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #1b2f1c;
+  --color-tertiary-fixed: #d3e7d3;
+  --color-tertiary-fixed-dim: #b5ceb5;
+  --color-on-tertiary-fixed: #0e1e0f;
+  --color-on-tertiary-fixed-variant: #364d36;
+
+  /* Deeper pink blush surface glow */
+  --color-surface: #fff2f4;
+  --color-surface-bright: #fff6f7;
+  --color-surface-dim: #e8d0d5;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #fce5e9;
+  --color-surface-container: #f7d5dc;
+  --color-surface-container-high: #f1c5ce;
+  --color-surface-container-highest: #ebbac4;
+  --color-surface-variant: #f2cbd3;
+
+  --color-on-surface: #1e1315;
+  --color-on-surface-variant: #593f44;
+  --color-inverse-surface: #362227;
+  --color-inverse-on-surface: #faebed;
+
+  --color-outline: #8c6d73;
+  --color-outline-variant: #e2b7bf;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffd8dc;
+  --color-on-error-container: #93000a;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.font-headline {
+  font-family: var(--font-headline);
+}
+
+/* Material symbol configuration */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.material-symbols-outlined.fill {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Deep Obsidian Dark Mode Styling */
+.dark {
+  --color-surface: #12090c;
+  --color-surface-bright: #1c0e13;
+  --color-surface-dim: #0a0406;
+  --color-surface-container-lowest: #150b0f;
+  --color-surface-container-low: #1e0f15;
+  --color-surface-container: #28141c;
+  --color-surface-container-high: #351a24;
+  --color-surface-container-highest: #42202d;
+  --color-surface-variant: #351a24;
+
+  --color-on-surface: #fdebed;
+  --color-on-surface-variant: #d6b4bd;
+  --color-outline: #8a636e;
+  --color-outline-variant: #4a2834;
+
+  --color-primary: #f27284;
+  --color-primary-container: #9e3544;
+  --color-on-primary: #470e17;
+  --color-on-primary-container: #ffd8dc;
+
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #12090c;
+  color: #fdebed;
+}
+
+/* Custom scrollbar for high-tech digitalized feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(158, 53, 68, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(158, 53, 68, 0.5);
+}
