@@ -79,10 +79,11 @@ export const Footer: React.FC = () => {
             </li>
             <li>
               <button
-                onClick={() => navigateTo('customer-account')}
-                className="hover:text-[#84504c] transition-colors text-left"
+                onClick={() => navigateTo('tracking')}
+                className="hover:text-[#9e3544] dark:hover:text-[#f27284] transition-colors text-left flex items-center gap-1.5 font-semibold text-[#9e3544] dark:text-[#f27284]"
               >
-                Track Nationwide Order
+                <span className="material-symbols-outlined text-xs">local_shipping</span>
+                <span>Track Nationwide Order (পার্সেল ট্র্যাকিং)</span>
               </button>
             </li>
             <li>

@@ -2,7 +2,19 @@ import React, { useState } from 'react';
 import { useStore } from '../context/StoreContext';
 
 export const QuickViewModal: React.FC = () => {
-  const { quickViewProduct, setQuickViewProduct, addToCart, isInWishlist, toggleWishlist } = useStore();
+  const {
+    quickViewProduct,
+    setQuickViewProduct,
+    addToCart,
+    cart,
+    removeFromCart,
+    isInWishlist,
+    toggleWishlist,
+    isAdminAuthenticated,
+    deleteProduct,
+    showToast,
+  } = useStore();
+
   const [selectedShade, setSelectedShade] = useState<string | undefined>(
     quickViewProduct?.shades ? quickViewProduct.shades[0].name : undefined
   );
@@ -11,108 +23,137 @@ export const QuickViewModal: React.FC = () => {
   if (!quickViewProduct) return null;
 
   const isLiked = isInWishlist(quickViewProduct.id);
+  const isInBag = cart.some((item) => item.product.id === quickViewProduct.id);
 
   const handleAddToCart = () => {
     addToCart(quickViewProduct, quantity, selectedShade);
     setQuickViewProduct(null);
   };
 
+  const handleRemoveFromCart = () => {
+    removeFromCart(quickViewProduct.id);
+    showToast(`Removed "${quickViewProduct.name}" from shopping bag.`);
+  };
+
+  const handleDeleteByAdmin = () => {
+    if (window.confirm(`Admin: Delete "${quickViewProduct.name}" from store catalog permanently?`)) {
+      deleteProduct(quickViewProduct.id);
+      setQuickViewProduct(null);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-[#342f31]/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white max-w-2xl w-full rounded-2xl p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <div className="bg-white dark:bg-[#1e0f15] max-w-2xl w-full rounded-3xl p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200 my-8 text-[#1e1315] dark:text-[#fdebed] border border-[#e2b7bf]/50 dark:border-[#4a2834]">
         <button
           onClick={() => setQuickViewProduct(null)}
           aria-label="Close modal"
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#f6ebee] text-[#524342] transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-[#fff2f4] dark:hover:bg-[#28141c] text-[#593f44] dark:text-[#d6b4bd] transition-colors"
         >
           <span className="material-symbols-outlined text-xl">close</span>
         </button>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
           {/* Media preview */}
-          <div className="relative aspect-square rounded-xl overflow-hidden bg-[#fbf1f3]">
+          <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#fff2f4] dark:bg-[#28141c]">
             <img
               src={quickViewProduct.imageUrl}
               alt={quickViewProduct.name}
               className="w-full h-full object-cover"
             />
             {quickViewProduct.badge && (
-              <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#84504c] text-white text-xs font-bold uppercase tracking-wider shadow-sm">
+              <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-[#9e3544] text-white text-[10px] font-bold uppercase tracking-wider shadow-sm">
                 {quickViewProduct.badge}
               </span>
             )}
             <button
               onClick={() => toggleWishlist(quickViewProduct.id)}
-              className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#524342] hover:text-[#84504c] shadow-sm transition-colors"
+              className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 dark:bg-[#1e0f15]/90 backdrop-blur-sm flex items-center justify-center text-[#593f44] dark:text-[#d6b4bd] hover:text-[#9e3544] dark:hover:text-[#f27284] shadow-sm transition-colors"
             >
-              <span className={`material-symbols-outlined text-lg ${isLiked ? 'text-[#84504c] fill' : ''}`}>
+              <span className={`material-symbols-outlined text-lg ${isLiked ? 'text-[#9e3544] dark:text-[#f27284] fill' : ''}`}>
                 favorite
               </span>
             </button>
+
+            {/* In stock tag */}
+            <div className="absolute bottom-3 left-3">
+              <span className="px-2.5 py-0.5 rounded-full bg-white/90 dark:bg-[#1e0f15]/90 backdrop-blur-md text-[10px] font-bold text-[#4d644d] dark:text-[#83a083] shadow-xs">
+                {quickViewProduct.stockCount > 0 ? `In Stock (${quickViewProduct.stockCount} units)` : 'Out of Stock'}
+              </span>
+            </div>
           </div>
 
           {/* Details */}
           <div className="space-y-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs uppercase tracking-wider text-[#7d562d] font-bold">
+                <span className="text-xs uppercase tracking-wider text-[#8c5324] dark:text-[#fbc698] font-bold">
                   {quickViewProduct.category}
                 </span>
-                <span className="text-xs text-[#524342]">·</span>
-                <span className="text-xs text-[#536251] font-semibold">100% Authentic BD</span>
+                <span className="text-xs text-[#593f44]">·</span>
+                <span className="text-xs text-[#4d644d] dark:text-[#83a083] font-semibold">100% Authentic BD</span>
               </div>
-              <h2 className="font-headline text-xl text-[#1f1a1c] font-bold leading-snug">
+              <h2 className="font-headline text-xl font-bold leading-snug">
                 {quickViewProduct.name}
               </h2>
+              {quickViewProduct.subtitle && (
+                <p className="text-xs text-[#593f44] dark:text-[#d6b4bd] mt-1 leading-relaxed">
+                  {quickViewProduct.subtitle}
+                </p>
+              )}
+
               <div className="flex items-center gap-1.5 mt-2">
-                <div className="flex text-[#7d562d] text-sm">
+                <div className="flex text-[#8c5324] dark:text-[#fbc698] text-sm">
                   {[...Array(5)].map((_, i) => (
                     <span key={i} className="material-symbols-outlined text-sm fill">
                       star
                     </span>
                   ))}
                 </div>
-                <span className="text-xs font-bold text-[#1f1a1c]">{quickViewProduct.rating}</span>
-                <span className="text-xs text-[#524342]">({quickViewProduct.reviewCount} reviews)</span>
+                <span className="text-xs font-bold">{quickViewProduct.rating}</span>
+                <span className="text-xs text-[#593f44] dark:text-[#d6b4bd]">
+                  ({quickViewProduct.reviewCount} Bangladeshi reviews)
+                </span>
               </div>
             </div>
 
-            {/* Price */}
-            <div className="flex items-baseline gap-2 pt-1 border-t border-[#d6c2c0]/30">
-              <span className="font-headline text-2xl text-[#84504c] font-bold">
+            {/* Pricing */}
+            <div className="flex items-baseline gap-2.5">
+              <span className="font-headline text-2xl font-bold text-[#9e3544] dark:text-[#f27284]">
                 ৳{quickViewProduct.price.toLocaleString()}
               </span>
               {quickViewProduct.originalPrice && (
-                <span className="text-sm text-[#847371] line-through">
+                <span className="text-xs text-[#8c6d73] line-through">
                   ৳{quickViewProduct.originalPrice.toLocaleString()}
                 </span>
               )}
               {quickViewProduct.volumeOrSize && (
-                <span className="ml-auto text-xs px-2.5 py-0.5 rounded-full bg-[#fbf1f3] text-[#524342] font-medium">
-                  {quickViewProduct.volumeOrSize}
+                <span className="text-xs text-[#593f44] dark:text-[#d6b4bd] font-medium ml-1">
+                  ({quickViewProduct.volumeOrSize})
                 </span>
               )}
             </div>
 
-            <p className="text-xs sm:text-sm text-[#524342] leading-relaxed">
+            {/* Description */}
+            <p className="text-xs text-[#593f44] dark:text-[#d6b4bd] leading-relaxed line-clamp-3">
               {quickViewProduct.description}
             </p>
 
             {/* Shades selector if available */}
-            {quickViewProduct.shades && (
-              <div className="space-y-2">
-                <span className="text-xs text-[#524342] font-semibold block">
-                  Select Shade: <span className="text-[#1f1a1c]">{selectedShade}</span>
+            {quickViewProduct.shades && quickViewProduct.shades.length > 0 && (
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#593f44] dark:text-[#d6b4bd] block mb-1.5 tracking-wider">
+                  Shade Selection
                 </span>
                 <div className="flex items-center gap-2">
                   {quickViewProduct.shades.map((shade) => (
                     <button
                       key={shade.name}
                       onClick={() => setSelectedShade(shade.name)}
-                      className={`w-6 h-6 rounded-full transition-all ${
+                      className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer ${
                         selectedShade === shade.name
-                          ? 'ring-2 ring-[#84504c] ring-offset-2 scale-110'
-                          : 'opacity-80 hover:opacity-100'
+                          ? 'border-[#9e3544] scale-110'
+                          : 'border-white dark:border-[#4a2834]'
                       }`}
                       style={{ backgroundColor: shade.hex }}
                       title={shade.name}
@@ -124,14 +165,14 @@ export const QuickViewModal: React.FC = () => {
 
             {/* Key Actives */}
             <div>
-              <span className="text-[10px] uppercase font-bold text-[#524342] block mb-1.5 tracking-wider">
-                Key Actives
+              <span className="text-[10px] uppercase font-bold text-[#593f44] dark:text-[#d6b4bd] block mb-1.5 tracking-wider">
+                Key Formulation Actives
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {quickViewProduct.actives.map((act) => (
                   <span
                     key={act}
-                    className="px-2.5 py-0.5 rounded-full bg-[#f6ebee] text-[11px] text-[#524342]"
+                    className="px-2.5 py-0.5 rounded-full bg-[#fff2f4] dark:bg-[#28141c] text-[11px] text-[#593f44] dark:text-[#d6b4bd] font-medium"
                   >
                     {act}
                   </span>
@@ -139,31 +180,60 @@ export const QuickViewModal: React.FC = () => {
               </div>
             </div>
 
-            {/* Quantity and Add to Bag */}
-            <div className="flex items-center gap-3 pt-3">
-              <div className="flex items-center bg-[#fbf1f3] rounded-full px-2 py-1 shadow-sm">
+            {/* Quantity and Actions */}
+            <div className="space-y-3 pt-3">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center bg-[#fff2f4] dark:bg-[#28141c] rounded-full px-2 py-1 shadow-xs border border-[#e2b7bf]/30 dark:border-[#4a2834]">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-[#593f44] dark:text-[#d6b4bd] hover:bg-white dark:hover:bg-[#1e0f15] transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">remove</span>
+                  </button>
+                  <span className="px-3 text-sm font-semibold">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-[#593f44] dark:text-[#d6b4bd] hover:bg-white dark:hover:bg-[#1e0f15] transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-sm">add</span>
+                  </button>
+                </div>
+
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[#524342] hover:bg-white transition-colors"
+                  onClick={handleAddToCart}
+                  className="flex-1 py-3 px-6 rounded-full bg-[#9e3544] hover:bg-[#852c38] text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-sm">remove</span>
-                </button>
-                <span className="px-3 text-sm font-semibold text-[#1f1a1c]">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[#524342] hover:bg-white transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm">add</span>
+                  <span className="material-symbols-outlined text-base">shopping_bag</span>
+                  <span>Add to Bag • ৳{(quickViewProduct.price * quantity).toLocaleString()}</span>
                 </button>
               </div>
 
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 py-3 px-6 rounded-full bg-[#84504c] hover:bg-[#c58882] text-white text-sm font-bold shadow-md transition-all flex items-center justify-center gap-2"
-              >
-                <span className="material-symbols-outlined text-base">shopping_bag</span>
-                <span>Add to Bag • ৳{(quickViewProduct.price * quantity).toLocaleString()}</span>
-              </button>
+              {/* In-cart remove option or Admin quick remove */}
+              <div className="flex items-center justify-between pt-1 text-xs">
+                {isInBag ? (
+                  <button
+                    onClick={handleRemoveFromCart}
+                    className="text-[#ba1a1a] hover:underline flex items-center gap-1 font-semibold"
+                  >
+                    <span className="material-symbols-outlined text-sm">remove_shopping_cart</span>
+                    <span>Remove from Shopping Bag</span>
+                  </button>
+                ) : (
+                  <span className="text-[11px] text-[#593f44] dark:text-[#d6b4bd]">
+                    Free nationwide shipping over ৳2,500
+                  </span>
+                )}
+
+                {isAdminAuthenticated && (
+                  <button
+                    onClick={handleDeleteByAdmin}
+                    className="text-[#ba1a1a] hover:underline font-bold flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-sm">delete_forever</span>
+                    <span>Admin: Delete Product</span>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>

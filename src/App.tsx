@@ -10,9 +10,10 @@ import { CatalogPage } from './pages/CatalogPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { AccountPage } from './pages/AccountPage';
 import { AdminPage } from './pages/AdminPage';
+import { TrackingPage } from './pages/TrackingPage';
 
 const AppContent: React.FC = () => {
-  const { currentPage, toasts, removeToast } = useStore();
+  const { currentPage, toasts, removeToast, isDarkMode } = useStore();
 
   const renderCurrentView = () => {
     switch (currentPage) {
@@ -25,6 +26,8 @@ const AppContent: React.FC = () => {
       case 'fragrance':
       case 'offers':
         return <CatalogPage />;
+      case 'tracking':
+        return <TrackingPage />;
       case 'cart-checkout':
         return <CheckoutPage />;
       case 'customer-account':
@@ -39,7 +42,7 @@ const AppContent: React.FC = () => {
   const isAdmin = currentPage === 'admin-portal';
 
   return (
-    <div className="min-h-screen bg-[#fff8f8] text-[#1f1a1c] font-sans antialiased flex flex-col justify-between">
+    <div className={`min-h-screen ${isDarkMode ? 'dark bg-[#12090c] text-[#fdebed]' : 'bg-[#fff2f4] text-[#1e1315]'} font-sans antialiased flex flex-col justify-between transition-colors duration-300`}>
       {!isAdmin && <Header />}
 
       <main className={`w-full min-h-screen ${!isAdmin ? 'pt-32 sm:pt-36' : ''}`}>

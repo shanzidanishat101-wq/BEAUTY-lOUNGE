@@ -17,6 +17,8 @@ export const Header: React.FC = () => {
     isAdminAuthenticated,
     adminUser,
     logoutAdmin,
+    isDarkMode,
+    toggleDarkMode,
   } = useStore();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,6 +31,7 @@ export const Header: React.FC = () => {
     { label: 'Haircare', page: 'shop-catalog', category: 'Haircare' },
     { label: 'Fragrance', page: 'shop-catalog', category: 'Fragrance' },
     { label: 'Offers', page: 'shop-catalog', category: 'Offers' },
+    { label: 'Track Order', page: 'tracking' },
     {
       label: isAdminAuthenticated ? 'Admin Panel' : 'Admin Login',
       page: 'admin-portal',
@@ -135,6 +138,18 @@ export const Header: React.FC = () => {
             </span>
             <span className="text-xs text-[#1f1a1c] font-semibold">BDT (৳)</span>
           </div>
+
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleDarkMode}
+            aria-label="Toggle Dark Mode"
+            className="p-2 rounded-full hover:bg-[#fde5e9] dark:hover:bg-[#28141c] text-[#593f44] dark:text-[#d6b4bd] transition-colors flex items-center justify-center cursor-pointer"
+            title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Luxury Mode'}
+          >
+            <span className="material-symbols-outlined text-xl">
+              {isDarkMode ? 'light_mode' : 'dark_mode'}
+            </span>
+          </button>
 
           {/* Wishlist Icon */}
           <button

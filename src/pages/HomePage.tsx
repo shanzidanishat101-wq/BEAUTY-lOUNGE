@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../context/StoreContext';
-import { ASSETS } from '../data/mockData';
+import { ASSETS, FEATURED_MODELS } from '../data/mockData';
 
 export const HomePage: React.FC = () => {
   const {
@@ -15,6 +15,8 @@ export const HomePage: React.FC = () => {
   } = useStore();
 
   const [activeTab, setActiveTab] = useState<'trending' | 'monsoon' | 'eid'>('trending');
+  const [selectedModelIndex, setSelectedModelIndex] = useState(0);
+  const activeModel = FEATURED_MODELS[selectedModelIndex] || FEATURED_MODELS[0];
 
   // Countdown timer for Eid Campaign
   const [timeLeft, setTimeLeft] = useState({
@@ -162,44 +164,63 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Hero Bento Visual Card */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative rounded-2xl overflow-hidden bg-white p-3 shadow-xl border border-[#d6c2c0]/20">
-                <div className="relative h-[440px] sm:h-[480px] w-full rounded-xl overflow-hidden">
+            {/* Right Hero Bento Visual Card with Model Switcher */}
+            <div className="lg:col-span-5 relative space-y-3">
+              <div className="relative rounded-3xl overflow-hidden bg-white dark:bg-[#1e0f15] p-3 shadow-2xl border border-[#e2b7bf]/40 dark:border-[#4a2834]">
+                <div className="relative h-[460px] sm:h-[500px] w-full rounded-2xl overflow-hidden">
                   <img
-                    className="w-full h-full object-cover"
-                    src={ASSETS.heroModel}
-                    alt="South Asian model with radiant dewy skin holding serum"
+                    className="w-full h-full object-cover transition-all duration-500 transform hover:scale-105"
+                    src={activeModel.image}
+                    alt={activeModel.name}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1f1a1c]/80 via-transparent to-black/10"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#12090c]/90 via-transparent to-black/20"></div>
 
-                  {/* Top Floating Badge */}
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[#7d562d] text-sm fill">
-                      auto_awesome
-                    </span>
-                    <span className="text-xs text-[#1f1a1c] font-bold uppercase tracking-wider">
-                      Humid-Resistant Formula
+                  {/* Top Floating Badge with Model Tag */}
+                  <div className="absolute top-4 left-4 bg-white/95 dark:bg-[#1e0f15]/95 backdrop-blur-md px-3.5 py-1.5 rounded-full shadow-md flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[#9e3544] animate-pulse"></span>
+                    <span className="text-xs text-[#1e1315] dark:text-[#fdebed] font-bold uppercase tracking-wider">
+                      {activeModel.tag}
                     </span>
                   </div>
 
+                  {/* Model Switcher Buttons Overlay */}
+                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/40 backdrop-blur-md p-1 rounded-full border border-white/20">
+                    {FEATURED_MODELS.map((m, idx) => (
+                      <button
+                        key={m.id}
+                        onClick={() => setSelectedModelIndex(idx)}
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold transition-all cursor-pointer ${
+                          selectedModelIndex === idx
+                            ? 'bg-[#9e3544] text-white shadow-xs'
+                            : 'text-white/80 hover:text-white hover:bg-white/10'
+                        }`}
+                      >
+                        Model {idx + 1}
+                      </button>
+                    ))}
+                  </div>
+
                   {/* Bottom Glass Overlaid Card */}
-                  <div className="absolute bottom-4 inset-x-4 p-4 rounded-xl bg-white/90 backdrop-blur-md shadow-lg flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-widest text-[#84504c] font-bold block">
-                        Featured Iconic Drop
-                      </span>
-                      <p className="font-headline text-sm sm:text-base font-bold text-[#1f1a1c]">
-                        Aura Dew Glaze &amp; Niacinamide
+                  <div className="absolute bottom-4 inset-x-4 p-4 rounded-2xl bg-white/95 dark:bg-[#1e0f15]/95 backdrop-blur-md shadow-xl flex items-center justify-between border border-white/40 dark:border-[#4a2834]">
+                    <div className="min-w-0 pr-3">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[10px] uppercase tracking-widest text-[#9e3544] dark:text-[#f27284] font-bold">
+                          {activeModel.title}
+                        </span>
+                        <span className="text-[10px] text-[#8c6d73] dark:text-[#d6b4bd]">
+                          • {activeModel.skinTone}
+                        </span>
+                      </div>
+                      <p className="font-headline text-base font-bold text-[#1e1315] dark:text-[#fdebed] truncate">
+                        {activeModel.name}
                       </p>
-                      <p className="text-xs text-[#524342]">
-                        BDT ৳1,650{' '}
-                        <span className="line-through text-[#847371] font-normal">৳1,950</span>
+                      <p className="text-xs text-[#593f44] dark:text-[#d6b4bd] truncate">
+                        Routine: {activeModel.keyProduct}
                       </p>
                     </div>
                     <button
                       onClick={() => addToCart(products[0], 1)}
-                      className="w-11 h-11 rounded-full bg-[#84504c] text-white flex items-center justify-center hover:bg-[#c58882] transition-colors shadow-sm shrink-0"
+                      className="w-11 h-11 rounded-full bg-[#9e3544] text-white flex items-center justify-center hover:bg-[#852c38] transition-colors shadow-md shrink-0 cursor-pointer"
                       aria-label="Add featured product to bag"
                     >
                       <span className="material-symbols-outlined text-lg">shopping_bag</span>
@@ -208,20 +229,94 @@ export const HomePage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Secondary Floating Micro-Badge */}
-              <div className="hidden sm:flex absolute -bottom-5 -left-6 bg-white p-3.5 rounded-xl shadow-xl items-center gap-3 border border-[#d6c2c0]/30">
-                <div className="w-10 h-10 rounded-full bg-[#d7e7d1] flex items-center justify-center text-[#111f11]">
-                  <span className="material-symbols-outlined text-xl fill">check_circle</span>
+              {/* Secondary Floating Badges */}
+              <div className="flex flex-wrap items-center justify-between gap-3 px-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-[#1e0f15] border border-[#e2b7bf]/40 dark:border-[#4a2834] shadow-xs text-xs font-semibold">
+                  <span className="material-symbols-outlined text-sm text-[#4d644d] fill">verified</span>
+                  <span>{activeModel.humidityTested}</span>
                 </div>
-                <div>
-                  <p className="text-xs font-bold text-[#1f1a1c]">BSTI Lab Tested</p>
-                  <p className="text-[11px] text-[#524342]">Non-comedogenic • Cruelty-free</p>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white dark:bg-[#1e0f15] border border-[#e2b7bf]/40 dark:border-[#4a2834] shadow-xs text-xs font-semibold">
+                  <span className="material-symbols-outlined text-sm text-[#9e3544] fill">water_drop</span>
+                  <span>Authentic Dhaka Lab Tested</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
       </div>
+
+      {/* NEW SECTION: FACES OF BANGLADESHI BEAUTY MODEL SHOWCASE */}
+      <section className="max-w-7xl mx-auto px-6 lg:px-12 py-10 w-full">
+        <div className="bg-white dark:bg-[#1e0f15] rounded-3xl p-6 sm:p-10 border border-[#e2b7bf]/40 dark:border-[#4a2834] shadow-sm space-y-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+              <span className="text-xs uppercase tracking-widest text-[#9e3544] dark:text-[#f27284] font-bold block mb-1">
+                Beauty Lounge Muse Gallery • বাংলাদেশি রূপচর্চার মুখ
+              </span>
+              <h2 className="font-headline text-2xl sm:text-3xl font-bold text-[#1e1315] dark:text-[#fdebed]">
+                Curated Radiance for Every Bangladeshi Undertone
+              </h2>
+              <p className="text-xs sm:text-sm text-[#593f44] dark:text-[#d6b4bd] mt-1 max-w-2xl">
+                Explore our editorial cosmetics formulations tested on South Asian skin in real 88% monsoon humidity.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {FEATURED_MODELS.map((model, idx) => (
+              <div
+                key={model.id}
+                onClick={() => setSelectedModelIndex(idx)}
+                className={`group relative rounded-2xl overflow-hidden border transition-all cursor-pointer p-4 space-y-4 ${
+                  selectedModelIndex === idx
+                    ? 'border-[#9e3544] dark:border-[#f27284] bg-[#fff2f4]/60 dark:bg-[#28141c]/60 shadow-md ring-2 ring-[#9e3544]/20'
+                    : 'border-[#e2b7bf]/30 dark:border-[#4a2834] bg-white dark:bg-[#1e0f15] hover:border-[#9e3544]/50'
+                }`}
+              >
+                <div className="relative h-72 w-full rounded-xl overflow-hidden">
+                  <img
+                    alt={model.name}
+                    src={model.image}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+                  <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-white/90 dark:bg-[#1e0f15]/90 text-[10px] font-bold text-[#9e3544] dark:text-[#f27284] uppercase">
+                    {model.tag}
+                  </span>
+                  <div className="absolute bottom-3 inset-x-3 text-white">
+                    <p className="text-xs font-semibold opacity-90">{model.title}</p>
+                    <h3 className="font-headline text-lg font-bold">{model.name}</h3>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-[#8c6d73] dark:text-[#d6b4bd] text-[11px]">
+                    <span>Skin Tone: <strong>{model.skinTone}</strong></span>
+                    <span>Undertone: <strong>{model.undertone}</strong></span>
+                  </div>
+                  <p className="text-[#593f44] dark:text-[#d6b4bd] italic text-[11px] leading-relaxed line-clamp-2">
+                    &ldquo;{model.quote}&rdquo;
+                  </p>
+                  <div className="pt-2 border-t border-[#e2b7bf]/30 dark:border-[#4a2834] flex items-center justify-between">
+                    <span className="text-[11px] font-bold text-[#9e3544] dark:text-[#f27284]">
+                      {model.keyProduct}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateTo('shop-catalog');
+                      }}
+                      className="px-3 py-1 rounded-full bg-[#9e3544] text-white text-[11px] font-bold hover:bg-[#852c38] transition-colors"
+                    >
+                      Shop Routine
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CATEGORY SHOWCASE BAR */}
       <section className="max-w-7xl mx-auto px-6 lg:px-12 py-12 w-full">
